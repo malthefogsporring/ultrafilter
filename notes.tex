@@ -1,1 +1,61 @@
 \section{Introduction}
+We give an exposition on monads by exploring a key example: the ultrafilter monad. We will learn that every adjoint pair gives rise to a monad, and moreover that every monad arises from an adjunction. In fact, more is true: there is always a final and initial such adjunction. The final adjunction goes to the Eilenberg-Moore category, which classifies the algebras over the monad. Familiar algebraic categories, such as groups and rings, arise as the categories of algebras over a monad. Indeed, it is sensible to \textit{define} an algebraic category in this way. This has a surprising and enlightening consequence: the category of compact hausdorff spaces is an algebraic category over the ultrafilter monad. 
+
+From another perspective, we will see how sometimes a single functor can give rise to a monad: the codensity monad. In particular, the codensity monad of the inclusion $\textbf{Fin}\rightarrow \textbf{Set}$ is the ultrafilter monad! The concept of finiteness alone is therefore enough to define compact haussdorff spaces in a routine way.
+
+Knowledge of basic category theory will be assumed, in particular functors, natural transformations and adjoints.
+
+\section{Monads}
+Recall that an \defn{adjunction} \[
+\begin{tikzcd}
+C\ar[r,bend left,"F",""{name=A, below}] & D\ar[l,bend left,"G",""{name=B,above}] \ar[from=A, to=B, symbol=\dashv]
+\end{tikzcd}
+\]
+is a pair of functors along with natural transformations $$\eta:1_C\rightarrow GF\text{ and }\epsilon:FG\rightarrow 1_D,$$ called the \defn{unit} and \defn{counit} respectively, satisfying the triangle identities:
+
+% https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZABgBpiBdUkANwEMAbAVxiRADEQBfU9TXfIRQBGUsKq1GLNpx59seAkVGVq9Zq0QcA4rN4gMCwUQBM5Ceulbt3fYYFKUAZnNqpmkLptyD-RUOQXcTcNNm8JGCgAc3giUAAzACcIAFskMhAcCCQzSVCtdgAdQpgcOlsE5LTEXKykUTyrEGKYNGwGAgACPUrU9Oo6xAbLDywoEGoGOgAjGAYABT9jLUSsKIALHAqQJL7EF0zsxAAWEKaWss7vfV3q08OkAFYzj20WtqwOwh9bpAPB56NUbjSYzOaLIyOECrDZbLgULhAA
+\[\begin{tikzcd}
+F \arrow[r, "F\eta"] \arrow[rd, "id"'] & FGF \arrow[d, "\epsilon F"] & G \arrow[r, "\eta G"] \arrow[rd, "id"'] & GFG \arrow[d, "G\epsilon"] \\
+                                       & F                           &                                         & G                         
+\end{tikzcd}\]
+
+Here $(F\eta)_c=F(\eta_c)$ and $(\epsilon F)_c=\epsilon_{F(c)}$. We can ask what part of the adjunction is visible from the perspective of $C$. Now we cannot see $F$ and $G$, only the composite endofunctor $GF$, which we will call $T$. In addition, the counit is no longer visible, only the unit. If we look a little harder, some more structure becomes visible. Applying $G$ to the left triangle identity above reveals a "multiplication" natural transformation $\mu:T^2\rightarrow T$ given by the whiskered counit $G\epsilon F$. The triangle identities reveal that this multiplication plays nicely with the unit:
+
+% https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZARgBoAGAXVJADcBDAGwFcYkQBxAMW5AF9S6TLnyEUZYtTpNW7XgKHY8BIgCYKUhizaJOXfoJAYloouQ00ts3fKkwoAc3hFQAMwBOEALZIAzDRwIJDJpbXYsKBAaRnoAIxhGAAVhZTEQdywHAAscAzdPH0R1EEDgyxkdEAi8kA9vPwCgxHNQ6z0AHXaYHHoausLi0ubysN1O7voAAl5ouITkkxVdDOzchVqCpBahkKtKjnG0bEYCSf0+Sj4gA
+\[\begin{tikzcd}
+GF \arrow[rd, "id"'] \arrow[r, "GF\eta"] & GFGF \arrow[d, "G\epsilon F"] & GF \arrow[ld, "id"] \arrow[l, "\eta GF"'] \\
+                                         & GF                            &                                          
+\end{tikzcd}\]
+Or, using our new notation,
+% https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZARgBoAGAXVJADcBDAGwFcYkQAVAPQCYQBfUuky58hFGWLU6TVuw4ChIDNjwEiPCtIYs2iTouGqxRclpo65+hf2kwoAc3hFQAMwBOEALZIAzDRwIJDIZXXYsKBAaRnoAIxhGAAURNXEQdywHAAscQxAPbyRNEEDgi1k9EAi8gp9EMxKgxBDLSoAdNq9mGs86-0akBtb2DpgcegACGyVaooCmoYr5UfGokBj4pJSTfQzs3Nt+IA
+\[\begin{tikzcd}
+T \arrow[rd, "id"'] \arrow[r, "\eta T"] & T^2 \arrow[d, "\mu"] & T \arrow[ld, "id"] \arrow[l, "T\eta"'] \\
+                                        & T                    &                                       
+\end{tikzcd}\]
+
+One can similarly verify that the multiplication is associative in the sense that the following diagram commutes:
+% https://tikzcd.yichuanshen.de/#N4Igdg9gJgpgziAXAbVABwnAlgFyxMJZABgBpiBdUkANwEMAbAVxiRABUA9AZhAF9S6TLnyEUARnJVajFmy4AmfoJAZseAkTLjp9Zq0QdOSgUPWiikndT1zD7ftJhQA5vCKgAZgCcIAWyQyEBwIJEkZfXkAHSi-JmUvXwDEIJCkBRtZAxAYuIACB1MQH3906jTEbkzIw1z4opLk8IqqiLsc2PqKPiA
+\[\begin{tikzcd}
+T^3 \arrow[r, "T\mu"] \arrow[d, "\mu T"] & T^2 \arrow[d, "\mu"] \\
+T^2 \arrow[r, "\mu"]                     & T                   
+\end{tikzcd}\]
+
+This gives $(C,T,\mu,\eta)$ the structure of a \defn{monad}. It is reminiscent of monoids, as we have a multiplication that is associative and unital. In fact, a monad is the same as a monoid object in the category of endofunctors on $C$.
+
+Having defined monads from adjunctions, we can ask the dual question: given a monad $(T,\mu,\eta),$ can we find an adjunction
+\[
+\begin{tikzcd}
+C\ar[r,bend left,"F",""{name=A, below}] & D\ar[l,bend left,"G",""{name=B,above}] \ar[from=A, to=B, symbol=\dashv]
+\end{tikzcd}
+\]
+that restricts to it? The answer is that not only can we always find such an adjunction, there are \textit{initial} and \textit{final} such choices. These adjunctions live in the category of adjunctions that restrict to the monad, where maps are functors $F:D\rightarrow D'$ between codomains such that $F$ commutes with the adjoint functors. The final adjunction is between $C$ and the \defn{Eilenberg-Moore category} of the monad, which classifies the "algebras over the monad". The initial adjunction is between $C$ and the \defn{Kleisli category} of the monad, classifying the "free algebras over the monad". These mottos match our intuitions: there is a monad $T$ on $\textbf{Set}$ sending a set $X$ to the (underlying set of) the free abelian group on $X$. The algebras over $T$ are exactly $\textbf{Ab}$, and the free algebras over $T$ are exactly the category of free abelian groups. The former fact makes the adjunction
+
+\[
+\begin{tikzcd}
+\textbf{Set}\ar[r,bend left,"F",""{name=A, below}] & \textbf{Ab}\ar[l,bend left,"U",""{name=B,above}] \ar[from=A, to=B, symbol=\dashv]
+\end{tikzcd}
+\]
+a \defn{monadic adjunction}: it is the Eilenberg-Moore adjunction associated to its monad. It makes a lot of sense to define an algebraic category as one with a monadic adjunction from sets. From this perspective, $\textbf{Grp}, \textbf{Ab}, \textbf{Ring}, \textbf{Vect}_k$ are all algebraic categories. Notably, $\textbf{Field}$ is not an algebraic category, which may or may not be to your taste, but correctly identifies that the category of fields is not as well-behaved as algebraic categories. More surprising is that the category of compact Hausdorff spaces is algebraic, as we will see next.
+\section{The ultrafilter monad}
+
+\section{Codensity monads}
